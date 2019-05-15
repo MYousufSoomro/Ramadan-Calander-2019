@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { khiTiming } from './config/ramadan_timing'
-import NavTabs from './components/NavTabs'
+import Appbar from './components/Appbar'
+import Today from './components/Today'
+import Button from '@material-ui/core/Button';
+import CardActions from '@material-ui/core/CardActions';
+
+
 
 class App extends Component {
   constructor() {
@@ -11,7 +15,13 @@ class App extends Component {
     this.state = {
       today: '',
       yesterday: '',
-      tomorrow: ''
+      tomorrow: '',
+      isYesterday: false,
+      isToday: true,
+      isTomorrow: false,
+      YesterdayBTNcolor: 'default',
+      TodayBTNcolor: 'primary',
+      TomorrowBTNcolor: 'default'
     }
   }
 
@@ -33,64 +43,70 @@ class App extends Component {
 
 
   render() {
-    const { today, tomorrow, yesterday } = this.state;
-    console.log(yesterday, today, tomorrow)
-
-    console.log(khiTiming)
+    const { today, tomorrow, yesterday, isYesterday, isToday, isTomorrow, YesterdayBTNcolor, TodayBTNcolor, TomorrowBTNcolor } = this.state;
 
     return (
       <div>
-        <NavTabs />
         <header>
-          <h1>Ramadan Calender 2019</h1>
-          <p>Karachi</p>
-          {khiTiming.map((item) => {
+          <Appbar />
+          <CardActions>
+            <Button variant="contained" fullWidth="true" color={YesterdayBTNcolor} onClick={() => {
+              this.setState({
+                isYesterday: true,
+                isToday: false, isTomorrow: false, YesterdayBTNcolor: 'primary', TodayBTNcolor: 'default', TomorrowBTNcolor: 'default'
+              })
+            }}>
+              Yesterday
+          </Button>
+
+            <Button variant="contained" fullWidth="true" color={TodayBTNcolor} onClick={() => {
+              this.setState({
+                isToday: true,
+                isYesterday: false, isTomorrow: false, YesterdayBTNcolor: 'default', TodayBTNcolor: 'primary', TomorrowBTNcolor: 'default'
+              })
+            }}>
+              Today
+          </Button>
+
+            <Button variant="contained" fullWidth="true" color={TomorrowBTNcolor} onClick={() => {
+              this.setState({
+                isTomorrow: true,
+                isToday: false, isYesterday: false, YesterdayBTNcolor: 'default', TodayBTNcolor: 'default', TomorrowBTNcolor: 'primary'
+              })
+            }}>
+              Tomorrow
+          </Button>
+          </CardActions>
+          {!isYesterday && !isTomorrow && isToday && khiTiming.map((item) => {
             if (item.Date === today) {
               return (
-                <div>
-                  <h1>Today</h1>
-                  <h2>Ramadan: {item.Ramadan}</h2>
-                  <h3>Date: {item.Date}</h3>
-                  <h3>SEHR: {item.SEHR}</h3>
-                  <h3>IFTAR: {item.IFTAR}</h3>
-                </div>
+                <Today RamazanDay={item.Ramadan} TodayDate={item.Date} Sehar={item.SEHR} Iftar={item.IFTAR} />
               )
             }
 
           })}
 
-
-          {khiTiming.map((item) => {
+          {isYesterday && !isTomorrow && !isToday && khiTiming.map((item) => {
             if (item.Date === yesterday) {
               return (
-                <div>
-                  <h1>Yesterday</h1>
-                  <h2>Ramadan: {item.Ramadan}</h2>
-                  <h3>Date: {item.Date}</h3>
-                  <h3>SEHR: {item.SEHR}</h3>
-                  <h3>IFTAR: {item.IFTAR}</h3>
-                </div>
+                <Today RamazanDay={item.Ramadan} TodayDate={item.Date} Sehar={item.SEHR} Iftar={item.IFTAR} />
               )
             }
 
           })}
 
 
-
-          {khiTiming.map((item) => {
+          {!isYesterday && isTomorrow && !isToday && khiTiming.map((item) => {
             if (item.Date === tomorrow) {
               return (
-                <div>
-                  <h1>Tomorrow</h1>
-                  <h2>Ramadan: {item.Ramadan}</h2>
-                  <h3>Date: {item.Date}</h3>
-                  <h3>SEHR: {item.SEHR}</h3>
-                  <h3>IFTAR: {item.IFTAR}</h3>
-                </div>
+                <Today RamazanDay={item.Ramadan} TodayDate={item.Date} Sehar={item.SEHR} Iftar={item.IFTAR} />
               )
             }
           })}
         </header>
+        <div className="footer">
+          <p>Developed by <a href="https://www.twitter.com/MYousufSoomro" target="_blank" >M Yousuf Soomro</a></p>
+        </div>
       </div>
     )
   }
